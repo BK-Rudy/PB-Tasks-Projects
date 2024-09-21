@@ -1,0 +1,54 @@
+services:
+  rabbit:
+    image: rabbitmq:3-management
+    container_name: RABBIT-SERVER
+    networks:
+      - tasks_projects
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - ./definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    command: rabbitmq-server
+  eureka:
+    image: bruno-rudy/eureka:latest
+    container_name: EUREKA-SERVER
+    ports:
+      - "8761:8761"
+    networks:
+      - tasks_projects
+  task:
+    image: bruno-rudy/task:latest
+    ports:
+      - "8082:8082"
+    networks:
+      - tasks_projects
+    depends_on:
+      - rabbit
+      - eureka
+  project:
+    image: bruno-rudy/project:latest
+    networks:
+      - tasks_projects
+    ports:
+      - "8081:8081"
+    depends_on:
+      - rabbit
+      - eureka
+  gateway:
+    image: bruno-rudy/gateway:latest
+    networks:
+      - tasks_projects
+    ports:
+      - "9999:9999"
+    depends_on:
+      - eureka
+      - project
+      - task
+networks:
+  tasks_projects:
+    driver: bridge

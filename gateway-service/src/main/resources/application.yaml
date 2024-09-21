@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: project
+          uri: lb://PROJECT-SERVICE
+          predicates:
+            - Path=/project/**
+        - id: task
+          uri: lb://TASK-SERVICE
+          predicates:
+            - Path=/task/**
+  application:
+    name: gateway-service
+server:
+  port: 9999
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
