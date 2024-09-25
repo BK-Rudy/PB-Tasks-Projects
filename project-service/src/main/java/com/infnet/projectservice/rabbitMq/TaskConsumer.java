@@ -31,17 +31,9 @@ public class TaskConsumer {
             Long actProjectId = task.getProjectId();
 
             Project actProject = projectService.findById(actProjectId)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + actProjectId));
+                    .orElseThrow(() -> new IllegalArgumentException("Projeto não encontrado " + actProjectId));
 
-            List<RelatedProject> relatedProjects = actProject.getRelatedProjects();
-            List<Project> projects = projectService.findAll();
-
-            for (Project project : projects) {
-                boolean haveAsRelatedProject = project.getRelatedProjects().stream().anyMatch(f -> f.getProjectId().equals(actProjectId));
-                if (haveAsRelatedProject) {
-                    projectService.addTask(project.getId(), task);
-                }
-            }
+            projectService.addTask(actProject.getId(), task);
 
             log.info("Mensagem recebida com sucesso.");
         } catch (Exception e) {

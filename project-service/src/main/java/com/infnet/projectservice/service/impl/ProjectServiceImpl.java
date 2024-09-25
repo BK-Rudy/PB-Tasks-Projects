@@ -161,6 +161,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public void addTask(Long id, Task task) throws Exception {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Erro: Não foi possível encontrar projeto com ID: " + id));
